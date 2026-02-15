@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Lì Xì Tết 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        /* Login Screen */
+        #loginScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #loginScreen.hidden {
+            display: none;
+        }
+
+        .login-box {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .login-title {
+            font-size: 2rem;
+            color: #667eea;
+            margin-bottom: 2rem;
+            font-weight: 700;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            font-family: 'Quicksand', sans-serif;
+            outline: none;
+        }
+
+        .login-input:focus {
+            border-color: #764ba2;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .error-message {
+            color: #ff4757;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Admin Panel */
+        #adminPanel {
+            display: none;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        #adminPanel.active {
+            display: block;
+        }
+
+        .admin-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .admin-title {
+            font-size: 2rem;
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .admin-stats {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.3rem;
+        }
+
+        .logout-button {
+            padding: 0.8rem 1.5rem;
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .logout-button:hover {
+            background: #d63031;
+            transform: translateY(-2px);
+        }
+
+        /* Controls */
+        .controls {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: 'Quicksand', sans-serif;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: #667eea;
+        }
+
+        .control-button {
+            padding: 0.8rem 1.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .control-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .control-button.danger {
+            background: #ff4757;
+        }
+
+        .control-button.danger:hover {
+            background: #d63031;
+        }
+
+        /* Table */
+        .table-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table thead {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .data-table th {
+            padding: 1.2rem;
+            text-align: left;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .data-table td {
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f8f9ff;
+        }
+
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .prize-badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #333;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .delete-button {
+            padding: 0.5rem 1rem;
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .delete-button:hover {
+            background: #d63031;
+            transform: scale(1.05);
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: #999;
+            font-size: 1.1rem;
+        }
+
+        .device-info {
+            font-size: 0.85rem;
+            color: #666;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .admin-header {
+                text-align: center;
+            }
+
+            .admin-stats {
+                justify-content: center;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            .data-table {
+                min-width: 800px;
+            }
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .modal-message {
+            margin-bottom: 1.5rem;
+            color: #666;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .modal-button {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Quicksand', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .modal-button.confirm {
+            background: #ff4757;
+            color: white;
+        }
+
+        .modal-button.confirm:hover {
+            background: #d63031;
+        }
+
+        .modal-button.cancel {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .modal-button.cancel:hover {
+            background: #d0d0d0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen">
+        <div class="login-box">
+            <div class="login-title">🔐 Admin Login</div>
+            <input type="password" id="passwordInput" class="login-input" placeholder="Nhập mật khẩu...">
+            <button id="loginButton" class="login-button">Đăng nhập</button>
+            <div id="errorMessage" class="error-message">Mật khẩu không đúng!</div>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel">
+        <div class="admin-header">
+            <div>
+                <div class="admin-title">🎊 Quản lý Lì Xì Tết 2026</div>
+            </div>
+            <div class="admin-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalPlayers">0</div>
+                    <div class="stat-label">Người chơi</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="totalPrize">0đ</div>
+                    <div class="stat-label">Tổng tiền thưởng</div>
+                </div>
+            </div>
+            <button class="logout-button" id="logoutButton">Đăng xuất</button>
+        </div>
+
+        <div class="controls">
+            <input type="text" id="searchInput" class="search-input" placeholder="Tìm kiếm theo tên, IP...">
+            <button class="control-button" id="refreshButton">🔄 Làm mới</button>
+            <button class="control-button danger" id="clearAllButton">🗑️ Xóa tất cả</button>
+        </div>
+
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Tên</th>
+                        <th>Tiền thưởng</th>
+                        <th>Thời gian</th>
+                        <th>IP/ID</th>
+                        <th>Thiết bị</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="playersTableBody">
+                    <tr>
+                        <td colspan="6" class="no-data">Chưa có dữ liệu</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">Xác nhận</div>
+            <div class="modal-message" id="modalMessage">Bạn có chắc chắn muốn thực hiện thao tác này?</div>
+            <div class="modal-buttons">
+                <button class="modal-button cancel" id="modalCancel">Hủy</button>
+                <button class="modal-button confirm" id="modalConfirm">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ADMIN_PASSWORD = 'admin2026';
+
+        // Elements
+        const loginScreen = document.getElementById('loginScreen');
+        const adminPanel = document.getElementById('adminPanel');
+        const passwordInput = document.getElementById('passwordInput');
+        const loginButton = document.getElementById('loginButton');
+        const errorMessage = document.getElementById('errorMessage');
+        const logoutButton = document.getElementById('logoutButton');
+        const searchInput = document.getElementById('searchInput');
+        const refreshButton = document.getElementById('refreshButton');
+        const clearAllButton = document.getElementById('clearAllButton');
+        const playersTableBody = document.getElementById('playersTableBody');
+        const totalPlayers = document.getElementById('totalPlayers');
+        const totalPrize = document.getElementById('totalPrize');
+        const confirmModal = document.getElementById('confirmModal');
+        const modalMessage = document.getElementById('modalMessage');
+        const modalCancel = document.getElementById('modalCancel');
+        const modalConfirm = document.getElementById('modalConfirm');
+
+        let currentAction = null;
+        let currentPlayerId = null;
+
+        // Check if already logged in
+        if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+            showAdminPanel();
+        }
+
+        // Login
+        loginButton.addEventListener('click', login);
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') login();
+        });
+
+        function login() {
+            const password = passwordInput.value;
+            if (password === ADMIN_PASSWORD) {
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                showAdminPanel();
+                errorMessage.classList.remove('show');
+            } else {
+                errorMessage.classList.add('show');
+                passwordInput.value = '';
+            }
+        }
+
+        function showAdminPanel() {
+            loginScreen.classList.add('hidden');
+            adminPanel.classList.add('active');
+            loadPlayers();
+        }
+
+        // Logout
+        logoutButton.addEventListener('click', () => {
+            sessionStorage.removeItem('adminLoggedIn');
+            location.reload();
+        });
+
+        // Load players data
+        function loadPlayers(searchTerm = '') {
+            const players = JSON.parse(localStorage.getItem('tetPlayers') || '[]');
+            
+            // Filter by search term
+            const filteredPlayers = searchTerm 
+                ? players.filter(p => 
+                    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    p.fingerprint.toLowerCase().includes(searchTerm.toLowerCase())
+                  )
+                : players;
+
+            // Update stats
+            totalPlayers.textContent = players.length;
+            const total = players.reduce((sum, p) => sum + p.prize, 0);
+            totalPrize.textContent = total.toLocaleString('vi-VN') + 'đ';
+
+            // Render table
+            if (filteredPlayers.length === 0) {
+                playersTableBody.innerHTML = '<tr><td colspan="6" class="no-data">Không có dữ liệu</td></tr>';
+                return;
+            }
+
+            playersTableBody.innerHTML = filteredPlayers.map((player, index) => `
+                <tr>
+                    <td><strong>${escapeHtml(player.name)}</strong></td>
+                    <td><span class="prize-badge">${player.prize.toLocaleString('vi-VN')} VNĐ</span></td>
+                    <td>${formatDate(player.timestamp)}</td>
+                    <td><code>${player.fingerprint.substring(0, 20)}...</code></td>
+                    <td><div class="device-info" title="${escapeHtml(player.device)}">${getDeviceType(player.device)}</div></td>
+                    <td><button class="delete-button" onclick="confirmDelete('${player.fingerprint}')">Xóa & Reset IP</button></td>
+                </tr>
+            `).join('');
+        }
+
+        // Search
+        searchInput.addEventListener('input', (e) => {
+            loadPlayers(e.target.value);
+        });
+
+        // Refresh
+        refreshButton.addEventListener('click', () => {
+            searchInput.value = '';
+            loadPlayers();
+        });
+
+        // Clear all
+        clearAllButton.addEventListener('click', () => {
+            showModal('Xóa tất cả dữ liệu?', 'clearAll');
+        });
+
+        // Delete player
+        function confirmDelete(fingerprint) {
+            currentPlayerId = fingerprint;
+            const players = JSON.parse(localStorage.getItem('tetPlayers') || '[]');
+            const player = players.find(p => p.fingerprint === fingerprint);
+            showModal(`Xóa người chơi "${player.name}" và reset IP?`, 'delete');
+        }
+
+        // Show confirmation modal
+        function showModal(message, action) {
+            modalMessage.textContent = message;
+            currentAction = action;
+            confirmModal.classList.add('active');
+        }
+
+        // Modal cancel
+        modalCancel.addEventListener('click', () => {
+            confirmModal.classList.remove('active');
+            currentAction = null;
+            currentPlayerId = null;
+        });
+
+        // Modal confirm
+        modalConfirm.addEventListener('click', () => {
+            if (currentAction === 'delete' && currentPlayerId) {
+                deletePlayer(currentPlayerId);
+            } else if (currentAction === 'clearAll') {
+                clearAllPlayers();
+            }
+            confirmModal.classList.remove('active');
+            currentAction = null;
+            currentPlayerId = null;
+        });
+
+        // Delete player function
+        function deletePlayer(fingerprint) {
+            let players = JSON.parse(localStorage.getItem('tetPlayers') || '[]');
+            players = players.filter(p => p.fingerprint !== fingerprint);
+            localStorage.setItem('tetPlayers', JSON.stringify(players));
+            
+            // Remove fingerprint to allow replay
+            if (localStorage.getItem('userFingerprint') === fingerprint) {
+                localStorage.removeItem('userFingerprint');
+            }
+            
+            loadPlayers();
+        }
+
+        // Clear all players
+        function clearAllPlayers() {
+            localStorage.removeItem('tetPlayers');
+            localStorage.removeItem('userFingerprint');
+            loadPlayers();
+        }
+
+        // Utility functions
+        function formatDate(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleString('vi-VN', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function getDeviceType(userAgent) {
+            if (/mobile/i.test(userAgent)) return '📱 Mobile';
+            if (/tablet/i.test(userAgent)) return '📱 Tablet';
+            return '💻 Desktop';
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        // Initial load
+        if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+            loadPlayers();
+        }
+    </script>
+</body>
+</html>
