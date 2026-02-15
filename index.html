@@ -766,7 +766,7 @@
         //        20k=20%, 25k=20%, 30k=6%, 35k=6%, 
         //        40k=6%, 45k=6%, 50k=6%
 
-        // Get real user IP address using multiple APIs
+        // Get real user IP address using api.country.is and ipify.org
         async function getUserIP() {
             // Try method 1: api.country.is
             try {
@@ -785,26 +785,9 @@
                 console.warn('❌ api.country.is failed:', error.message);
             }
             
-            // Try method 2: ipapi.co (text format)
+            // Try method 2: ipify.org (text format - very reliable)
             try {
-                const response = await fetch('https://ipapi.co/ip/', {
-                    mode: 'cors',
-                    cache: 'no-cache'
-                });
-                if (response.ok) {
-                    const ip = await response.text();
-                    if (ip && ip.trim()) {
-                        console.log('✅ Got IP from ipapi.co:', ip.trim());
-                        return ip.trim();
-                    }
-                }
-            } catch (error) {
-                console.warn('❌ ipapi.co failed:', error.message);
-            }
-            
-            // Try method 3: ipify.org (text format - very reliable)
-            try {
-                const response = await fetch('https://api.ipify.org', {
+                const response = await fetch('https://api.ipify.org/', {
                     mode: 'cors',
                     cache: 'no-cache'
                 });
@@ -819,42 +802,8 @@
                 console.warn('❌ ipify.org failed:', error.message);
             }
             
-            // Try method 4: icanhazip.com
-            try {
-                const response = await fetch('https://icanhazip.com', {
-                    mode: 'cors',
-                    cache: 'no-cache'
-                });
-                if (response.ok) {
-                    const ip = await response.text();
-                    if (ip && ip.trim()) {
-                        console.log('✅ Got IP from icanhazip.com:', ip.trim());
-                        return ip.trim();
-                    }
-                }
-            } catch (error) {
-                console.warn('❌ icanhazip.com failed:', error.message);
-            }
-            
-            // Try method 5: ident.me
-            try {
-                const response = await fetch('https://v4.ident.me', {
-                    mode: 'cors',
-                    cache: 'no-cache'
-                });
-                if (response.ok) {
-                    const ip = await response.text();
-                    if (ip && ip.trim()) {
-                        console.log('✅ Got IP from ident.me:', ip.trim());
-                        return ip.trim();
-                    }
-                }
-            } catch (error) {
-                console.warn('❌ ident.me failed:', error.message);
-            }
-            
-            // All APIs failed - use enhanced fingerprint
-            console.warn('⚠️ ALL IP APIs FAILED! Using enhanced fingerprint as fallback.');
+            // Fallback to enhanced fingerprint
+            console.warn('⚠️ Both IP APIs failed! Using enhanced fingerprint as fallback.');
             return getEnhancedFingerprint();
         }
         
@@ -938,19 +887,28 @@
         let isMusicPlaying = false;
         let hasOpened = false;
         let hasSwipedToOpen = false;
+        let userHasPlayed = false; // Track if user already played
 
-        // Check if already played on page load
+        // Check if already played on page load (in background, non-blocking)
         window.addEventListener('DOMContentLoaded', async () => {
+            // Don't block UI - check in background
+            checkUserPlayedStatus();
+        });
+        
+        // Background check for played status
+        async function checkUserPlayedStatus() {
             const playedData = await hasUserPlayed();
             if (playedData) {
+                userHasPlayed = true;
                 document.getElementById('playedName').textContent = playedData.name;
-                document.getElementById('playedAmount').textContent = playedData.prize.toLocaleString('vi-VN') + ' VNĐ';
-                alreadyPlayedScreen.classList.add('active');
+                document.getElementById('playedAmount').textContent = parseInt(playedData.prize).toLocaleString('vi-VN') + ' VNĐ';
+                
+                // Only show if user is still on welcome screen
+                if (!welcomeScreen.classList.contains('hidden')) {
+                    alreadyPlayedScreen.classList.add('active');
+                }
             }
-            
-            // Don't try autoplay here - will be blocked by browser
-            // Music will play when user clicks "Bắt đầu" button
-        });
+        }
 
         // Enable start button when name is entered
         nameInput.addEventListener('input', () => {
@@ -958,9 +916,33 @@
         });
 
         // Start game
-        startButton.addEventListener('click', () => {
+        startButton.addEventListener('click', async () => {
             const name = nameInput.value.trim();
             if (name) {
+                // Show loading
+                startButton.disabled = true;
+                startButton.textContent = 'Đang kiểm tra...';
+                
+                // Quick check if already played (in case background check hasn't finished)
+                if (!userHasPlayed) {
+                    const playedData = await hasUserPlayed();
+                    if (playedData) {
+                        userHasPlayed = true;
+                        document.getElementById('playedName').textContent = playedData.name;
+                        document.getElementById('playedAmount').textContent = parseInt(playedData.prize).toLocaleString('vi-VN') + ' VNĐ';
+                        welcomeScreen.classList.add('hidden');
+                        alreadyPlayedScreen.classList.add('active');
+                        return;
+                    }
+                }
+                
+                // Check again right before starting (double check)
+                if (userHasPlayed) {
+                    welcomeScreen.classList.add('hidden');
+                    alreadyPlayedScreen.classList.add('active');
+                    return;
+                }
+                
                 userName = name;
                 
                 // Force play music on user interaction (button click)
