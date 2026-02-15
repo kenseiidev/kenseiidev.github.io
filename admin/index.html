@@ -476,7 +476,7 @@
     </div>
 
     <script>
-        const ADMIN_PASSWORD = 'kenseiakaminhson';
+        const ADMIN_PASSWORD = 'admin2026';
 
         // Elements
         const loginScreen = document.getElementById('loginScreen');
@@ -542,7 +542,7 @@
             const filteredPlayers = searchTerm 
                 ? players.filter(p => 
                     p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    p.fingerprint.toLowerCase().includes(searchTerm.toLowerCase())
+                    p.ip.toLowerCase().includes(searchTerm.toLowerCase())
                   )
                 : players;
 
@@ -562,9 +562,9 @@
                     <td><strong>${escapeHtml(player.name)}</strong></td>
                     <td><span class="prize-badge">${player.prize.toLocaleString('vi-VN')} VNĐ</span></td>
                     <td>${formatDate(player.timestamp)}</td>
-                    <td><code>${player.fingerprint.substring(0, 20)}...</code></td>
+                    <td><code>${player.ip}</code></td>
                     <td><div class="device-info" title="${escapeHtml(player.device)}">${getDeviceType(player.device)}</div></td>
-                    <td><button class="delete-button" onclick="confirmDelete('${player.fingerprint}')">Xóa & Reset IP</button></td>
+                    <td><button class="delete-button" onclick="confirmDelete('${player.ip}')">Xóa & Reset IP</button></td>
                 </tr>
             `).join('');
         }
@@ -586,10 +586,10 @@
         });
 
         // Delete player
-        function confirmDelete(fingerprint) {
-            currentPlayerId = fingerprint;
+        function confirmDelete(ip) {
+            currentPlayerId = ip;
             const players = JSON.parse(localStorage.getItem('tetPlayers') || '[]');
-            const player = players.find(p => p.fingerprint === fingerprint);
+            const player = players.find(p => p.ip === ip);
             showModal(`Xóa người chơi "${player.name}" và reset IP?`, 'delete');
         }
 
@@ -620,15 +620,10 @@
         });
 
         // Delete player function
-        function deletePlayer(fingerprint) {
+        function deletePlayer(ip) {
             let players = JSON.parse(localStorage.getItem('tetPlayers') || '[]');
-            players = players.filter(p => p.fingerprint !== fingerprint);
+            players = players.filter(p => p.ip !== ip);
             localStorage.setItem('tetPlayers', JSON.stringify(players));
-            
-            // Remove fingerprint to allow replay
-            if (localStorage.getItem('userFingerprint') === fingerprint) {
-                localStorage.removeItem('userFingerprint');
-            }
             
             loadPlayers();
         }
@@ -636,7 +631,7 @@
         // Clear all players
         function clearAllPlayers() {
             localStorage.removeItem('tetPlayers');
-            localStorage.removeItem('userFingerprint');
+            localStorage.removeItem('userFingerprint'); // Remove fallback fingerprint too
             loadPlayers();
         }
 
