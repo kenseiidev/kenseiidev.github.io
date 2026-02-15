@@ -770,7 +770,7 @@
         async function getUserIP() {
             // Try api.country.is (simple and reliable)
             try {
-                const response = await fetch('https://api.country.is/', {
+                const response = await fetch('https://api.ipify.org/?format=json', {
                     mode: 'cors',
                     cache: 'no-cache'
                 });
