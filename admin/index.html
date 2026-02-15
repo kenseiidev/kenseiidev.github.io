@@ -496,6 +496,9 @@
         const modalCancel = document.getElementById('modalCancel');
         const modalConfirm = document.getElementById('modalConfirm');
 
+        // Google Sheets API URL
+        const SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycby-IWPAsDZYUSfGdN9CxmsRD9IFa2tIlJl05sCQyNPphcwyIm4VNyXVWBM-c8oGtcu4BQ/exec';
+
         let currentAction = null;
         let currentPlayerId = null;
 
@@ -534,39 +537,50 @@
             location.reload();
         });
 
-        // Load players data
-        function loadPlayers(searchTerm = '') {
-            const players = JSON.parse(localStorage.getItem('tetPlayers') || '[]');
-            
-            // Filter by search term
-            const filteredPlayers = searchTerm 
-                ? players.filter(p => 
-                    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    p.ip.toLowerCase().includes(searchTerm.toLowerCase())
-                  )
-                : players;
+        // Load players data from Google Sheets
+        async function loadPlayers(searchTerm = '') {
+            try {
+                playersTableBody.innerHTML = '<tr><td colspan="6" class="no-data">Đang tải dữ liệu...</td></tr>';
+                
+                const url = `${SHEETS_API_URL}?action=getAll`;
+                const response = await fetch(url);
+                const players = await response.json();
+                
+                console.log('📊 Loaded players:', players);
+                
+                // Filter by search term
+                const filteredPlayers = searchTerm 
+                    ? players.filter(p => 
+                        p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        p.ip.toLowerCase().includes(searchTerm.toLowerCase())
+                      )
+                    : players;
 
-            // Update stats
-            totalPlayers.textContent = players.length;
-            const total = players.reduce((sum, p) => sum + p.prize, 0);
-            totalPrize.textContent = total.toLocaleString('vi-VN') + 'đ';
+                // Update stats
+                totalPlayers.textContent = players.length;
+                const total = players.reduce((sum, p) => sum + (parseInt(p.prize) || 0), 0);
+                totalPrize.textContent = total.toLocaleString('vi-VN') + 'đ';
 
-            // Render table
-            if (filteredPlayers.length === 0) {
-                playersTableBody.innerHTML = '<tr><td colspan="6" class="no-data">Không có dữ liệu</td></tr>';
-                return;
+                // Render table
+                if (filteredPlayers.length === 0) {
+                    playersTableBody.innerHTML = '<tr><td colspan="6" class="no-data">Không có dữ liệu</td></tr>';
+                    return;
+                }
+
+                playersTableBody.innerHTML = filteredPlayers.map((player, index) => `
+                    <tr>
+                        <td><strong>${escapeHtml(player.name)}</strong></td>
+                        <td><span class="prize-badge">${parseInt(player.prize).toLocaleString('vi-VN')} VNĐ</span></td>
+                        <td>${formatDate(player.timestamp)}</td>
+                        <td><code>${player.ip}</code></td>
+                        <td><div class="device-info" title="${escapeHtml(player.device)}">${getDeviceType(player.device)}</div></td>
+                        <td><button class="delete-button" onclick="confirmDelete('${player.ip}')">Xóa & Reset IP</button></td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading players:', error);
+                playersTableBody.innerHTML = '<tr><td colspan="6" class="no-data">❌ Lỗi tải dữ liệu. Vui lòng thử lại.</td></tr>';
             }
-
-            playersTableBody.innerHTML = filteredPlayers.map((player, index) => `
-                <tr>
-                    <td><strong>${escapeHtml(player.name)}</strong></td>
-                    <td><span class="prize-badge">${player.prize.toLocaleString('vi-VN')} VNĐ</span></td>
-                    <td>${formatDate(player.timestamp)}</td>
-                    <td><code>${player.ip}</code></td>
-                    <td><div class="device-info" title="${escapeHtml(player.device)}">${getDeviceType(player.device)}</div></td>
-                    <td><button class="delete-button" onclick="confirmDelete('${player.ip}')">Xóa & Reset IP</button></td>
-                </tr>
-            `).join('');
         }
 
         // Search
@@ -620,19 +634,37 @@
         });
 
         // Delete player function
-        function deletePlayer(ip) {
-            let players = JSON.parse(localStorage.getItem('tetPlayers') || '[]');
-            players = players.filter(p => p.ip !== ip);
-            localStorage.setItem('tetPlayers', JSON.stringify(players));
-            
-            loadPlayers();
+        async function deletePlayer(ip) {
+            try {
+                const url = `${SHEETS_API_URL}?action=deleteIP&ip=${encodeURIComponent(ip)}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                console.log('✅ Deleted IP:', ip, data);
+                
+                // Reload after 500ms
+                setTimeout(() => loadPlayers(), 500);
+            } catch (error) {
+                console.error('Error deleting player:', error);
+                alert('Lỗi khi xóa. Vui lòng thử lại.');
+            }
         }
 
         // Clear all players
-        function clearAllPlayers() {
-            localStorage.removeItem('tetPlayers');
-            localStorage.removeItem('userFingerprint'); // Remove fallback fingerprint too
-            loadPlayers();
+        async function clearAllPlayers() {
+            try {
+                const url = `${SHEETS_API_URL}?action=clearAll`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                console.log('✅ Cleared all data:', data);
+                
+                // Reload after 500ms
+                setTimeout(() => loadPlayers(), 500);
+            } catch (error) {
+                console.error('Error clearing data:', error);
+                alert('Lỗi khi xóa. Vui lòng thử lại.');
+            }
         }
 
         // Utility functions
