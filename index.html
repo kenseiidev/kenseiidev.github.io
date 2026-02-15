@@ -766,27 +766,95 @@
         //        20k=20%, 25k=20%, 30k=6%, 35k=6%, 
         //        40k=6%, 45k=6%, 50k=6%
 
-        // Get real user IP address using api.country.is
+        // Get real user IP address using multiple APIs
         async function getUserIP() {
-            // Try api.country.is (simple and reliable)
+            // Try method 1: api.country.is
             try {
-                const response = await fetch('https://api.ipify.org/?format=json', {
+                const response = await fetch('https://api.country.is/', {
                     mode: 'cors',
                     cache: 'no-cache'
                 });
                 if (response.ok) {
                     const data = await response.json();
                     if (data.ip) {
-                        console.log('Got IP from api.country.is:', data.ip);
+                        console.log('✅ Got IP from api.country.is:', data.ip);
                         return data.ip;
                     }
                 }
             } catch (error) {
-                console.warn('api.country.is failed:', error.message);
+                console.warn('❌ api.country.is failed:', error.message);
             }
             
-            // Fallback to enhanced fingerprint
-            console.warn('API failed. Using enhanced fingerprint.');
+            // Try method 2: ipapi.co (text format)
+            try {
+                const response = await fetch('https://ipapi.co/ip/', {
+                    mode: 'cors',
+                    cache: 'no-cache'
+                });
+                if (response.ok) {
+                    const ip = await response.text();
+                    if (ip && ip.trim()) {
+                        console.log('✅ Got IP from ipapi.co:', ip.trim());
+                        return ip.trim();
+                    }
+                }
+            } catch (error) {
+                console.warn('❌ ipapi.co failed:', error.message);
+            }
+            
+            // Try method 3: ipify.org (text format - very reliable)
+            try {
+                const response = await fetch('https://api.ipify.org', {
+                    mode: 'cors',
+                    cache: 'no-cache'
+                });
+                if (response.ok) {
+                    const ip = await response.text();
+                    if (ip && ip.trim()) {
+                        console.log('✅ Got IP from ipify.org:', ip.trim());
+                        return ip.trim();
+                    }
+                }
+            } catch (error) {
+                console.warn('❌ ipify.org failed:', error.message);
+            }
+            
+            // Try method 4: icanhazip.com
+            try {
+                const response = await fetch('https://icanhazip.com', {
+                    mode: 'cors',
+                    cache: 'no-cache'
+                });
+                if (response.ok) {
+                    const ip = await response.text();
+                    if (ip && ip.trim()) {
+                        console.log('✅ Got IP from icanhazip.com:', ip.trim());
+                        return ip.trim();
+                    }
+                }
+            } catch (error) {
+                console.warn('❌ icanhazip.com failed:', error.message);
+            }
+            
+            // Try method 5: ident.me
+            try {
+                const response = await fetch('https://v4.ident.me', {
+                    mode: 'cors',
+                    cache: 'no-cache'
+                });
+                if (response.ok) {
+                    const ip = await response.text();
+                    if (ip && ip.trim()) {
+                        console.log('✅ Got IP from ident.me:', ip.trim());
+                        return ip.trim();
+                    }
+                }
+            } catch (error) {
+                console.warn('❌ ident.me failed:', error.message);
+            }
+            
+            // All APIs failed - use enhanced fingerprint
+            console.warn('⚠️ ALL IP APIs FAILED! Using enhanced fingerprint as fallback.');
             return getEnhancedFingerprint();
         }
         
@@ -814,28 +882,41 @@
             return fingerprint;
         }
 
-        // Check if IP already played
+        // Google Sheets API URL
+        const SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycby-IWPAsDZYUSfGdN9CxmsRD9IFa2tIlJl05sCQyNPphcwyIm4VNyXVWBM-c8oGtcu4BQ/exec';
+
+        // Check if IP already played (using Google Sheets)
         async function hasUserPlayed() {
-            const players = JSON.parse(localStorage.getItem('tetPlayers') || '[]');
-            const userIP = await getUserIP();
-            return players.find(p => p.ip === userIP);
+            try {
+                const userIP = await getUserIP();
+                const url = `${SHEETS_API_URL}?action=checkIP&ip=${encodeURIComponent(userIP)}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.played) {
+                    console.log('✅ User already played:', data);
+                    return data;
+                }
+                return null;
+            } catch (error) {
+                console.error('Error checking user:', error);
+                return null;
+            }
         }
 
-        // Save player data with real IP
+        // Save player data to Google Sheets
         async function savePlayerData(name, prize) {
-            const players = JSON.parse(localStorage.getItem('tetPlayers') || '[]');
-            const userIP = await getUserIP();
-            
-            const playerData = {
-                name: name,
-                prize: prize,
-                ip: userIP,
-                timestamp: new Date().toISOString(),
-                device: navigator.userAgent
-            };
-            
-            players.push(playerData);
-            localStorage.setItem('tetPlayers', JSON.stringify(players));
+            try {
+                const userIP = await getUserIP();
+                const url = `${SHEETS_API_URL}?action=save&name=${encodeURIComponent(name)}&prize=${prize}&ip=${encodeURIComponent(userIP)}&timestamp=${encodeURIComponent(new Date().toISOString())}&device=${encodeURIComponent(navigator.userAgent)}`;
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                console.log('✅ Data saved to Google Sheets:', data);
+            } catch (error) {
+                console.error('Error saving to Google Sheets:', error);
+            }
         }
 
         // Elements
@@ -858,7 +939,7 @@
         let hasOpened = false;
         let hasSwipedToOpen = false;
 
-        // Try to autoplay music immediately on page load
+        // Check if already played on page load
         window.addEventListener('DOMContentLoaded', async () => {
             const playedData = await hasUserPlayed();
             if (playedData) {
@@ -867,13 +948,8 @@
                 alreadyPlayedScreen.classList.add('active');
             }
             
-            // Auto-play music
-            bgMusic.play().then(() => {
-                isMusicPlaying = true;
-            }).catch(e => {
-                console.log('Autoplay blocked by browser. User can click speaker icon.');
-                isMusicPlaying = false;
-            });
+            // Don't try autoplay here - will be blocked by browser
+            // Music will play when user clicks "Bắt đầu" button
         });
 
         // Enable start button when name is entered
@@ -886,14 +962,20 @@
             const name = nameInput.value.trim();
             if (name) {
                 userName = name;
+                
+                // Force play music on user interaction (button click)
+                bgMusic.play().then(() => {
+                    isMusicPlaying = true;
+                    console.log('🎵 Music playing');
+                }).catch(e => {
+                    console.log('Music blocked. Click speaker to play.');
+                    isMusicPlaying = false;
+                });
+                
                 welcomeScreen.classList.add('hidden');
                 
                 setTimeout(() => {
                     gameContainer.classList.add('active');
-                    // Music already playing from autoplay
-                    if (!isMusicPlaying) {
-                        playMusic();
-                    }
                     startEnvelopeRain();
                 }, 500);
             }
