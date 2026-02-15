@@ -497,7 +497,7 @@
         const modalConfirm = document.getElementById('modalConfirm');
 
         // Google Sheets API URL
-        const SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbwrphS1ApKgZOW0vVUlGpNlfP6YKv073ccBGvII8Vf8mFputUodLOMdBhlSWEIJGz0low/exec";
+        const SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbz-qElmaofsGGRb6JY43Id3xZdmbct6oUjMXI4pkbvsTrgN68PcxTsIYDxgIEeMxarZ/exec';
 
         let currentAction = null;
         let currentPlayerId = null;
@@ -540,13 +540,23 @@
         // Load players data from Google Sheets
         async function loadPlayers(searchTerm = '') {
             try {
-                playersTableBody.innerHTML = '<tr><td colspan="6" class="no-data">Đang tải dữ liệu...</td></tr>';
+                playersTableBody.innerHTML = '<tr><td colspan="6" class="no-data">⏳ Đang tải dữ liệu...</td></tr>';
                 
                 const url = `${SHEETS_API_URL}?action=getAll`;
-                const response = await fetch(url);
-                const players = await response.json();
+                console.log('📡 Fetching from:', url);
                 
-                console.log('📊 Loaded players:', players);
+                const response = await fetch(url);
+                console.log('📥 Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const text = await response.text();
+                console.log('📄 Response text:', text);
+                
+                const players = JSON.parse(text);
+                console.log('📊 Parsed players:', players);
                 
                 // Filter by search term
                 const filteredPlayers = searchTerm 
@@ -563,7 +573,7 @@
 
                 // Render table
                 if (filteredPlayers.length === 0) {
-                    playersTableBody.innerHTML = '<tr><td colspan="6" class="no-data">Không có dữ liệu</td></tr>';
+                    playersTableBody.innerHTML = '<tr><td colspan="6" class="no-data">📭 Chưa có người chơi nào</td></tr>';
                     return;
                 }
 
@@ -577,9 +587,11 @@
                         <td><button class="delete-button" onclick="confirmDelete('${player.ip}')">Xóa & Reset IP</button></td>
                     </tr>
                 `).join('');
+                
+                console.log('✅ Table rendered successfully');
             } catch (error) {
-                console.error('Error loading players:', error);
-                playersTableBody.innerHTML = '<tr><td colspan="6" class="no-data">❌ Lỗi tải dữ liệu. Vui lòng thử lại.</td></tr>';
+                console.error('❌ Error details:', error);
+                playersTableBody.innerHTML = `<tr><td colspan="6" class="no-data">❌ Lỗi: ${error.message}<br><small>Xem Console (F12) để biết thêm chi tiết</small></td></tr>';
             }
         }
 
