@@ -57,16 +57,11 @@
         .login-input {
             width: 100%;
             padding: 1rem;
-            border: 2px solid #667eea;
+            border: 2px solid #ddd;
             border-radius: 10px;
             font-size: 1rem;
             margin-bottom: 1.5rem;
             font-family: 'Quicksand', sans-serif;
-            outline: none;
-        }
-
-        .login-input:focus {
-            border-color: #764ba2;
         }
 
         .login-button {
@@ -79,17 +74,11 @@
             font-size: 1.1rem;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
             font-family: 'Quicksand', sans-serif;
         }
 
-        .login-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
         .error-message {
-            color: #ff4757;
+            color: #e74c3c;
             margin-top: 1rem;
             display: none;
         }
@@ -113,7 +102,6 @@
             background: white;
             padding: 2rem;
             border-radius: 20px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
             margin-bottom: 2rem;
             display: flex;
             justify-content: space-between;
@@ -131,7 +119,6 @@
         .admin-stats {
             display: flex;
             gap: 2rem;
-            flex-wrap: wrap;
         }
 
         .stat-item {
@@ -141,174 +128,122 @@
         .stat-value {
             font-size: 2rem;
             font-weight: 700;
-            color: #764ba2;
+            color: #667eea;
         }
 
         .stat-label {
             font-size: 0.9rem;
             color: #666;
-            margin-top: 0.3rem;
         }
 
         .logout-button {
-            padding: 0.8rem 1.5rem;
-            background: #ff4757;
+            padding: 0.75rem 1.5rem;
+            background: #e74c3c;
             color: white;
             border: none;
             border-radius: 10px;
-            font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
         }
 
-        .logout-button:hover {
-            background: #d63031;
-            transform: translateY(-2px);
-        }
-
-        /* Controls */
         .controls {
             background: white;
             padding: 1.5rem;
             border-radius: 20px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
             margin-bottom: 2rem;
             display: flex;
             gap: 1rem;
             flex-wrap: wrap;
-            align-items: center;
         }
 
         .search-input {
             flex: 1;
             min-width: 250px;
-            padding: 0.8rem 1rem;
-            border: 2px solid #e0e0e0;
+            padding: 0.75rem 1rem;
+            border: 2px solid #ddd;
             border-radius: 10px;
-            font-size: 1rem;
             font-family: 'Quicksand', sans-serif;
-            outline: none;
-        }
-
-        .search-input:focus {
-            border-color: #667eea;
         }
 
         .control-button {
-            padding: 0.8rem 1.5rem;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 0.75rem 1.5rem;
+            background: #667eea;
             color: white;
             border: none;
             border-radius: 10px;
-            font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
+            font-weight: 600;
             font-family: 'Quicksand', sans-serif;
         }
 
-        .control-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
         .control-button.danger {
-            background: #ff4757;
+            background: #e74c3c;
         }
 
-        .control-button.danger:hover {
-            background: #d63031;
-        }
-
-        /* Table */
         .table-container {
             background: white;
             border-radius: 20px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
 
-        .data-table {
+        table {
             width: 100%;
             border-collapse: collapse;
         }
 
-        .data-table thead {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+        th {
+            background: #667eea;
             color: white;
-        }
-
-        .data-table th {
-            padding: 1.2rem;
+            padding: 1rem;
             text-align: left;
-            font-weight: 700;
-            font-size: 0.95rem;
+            font-weight: 600;
         }
 
-        .data-table td {
-            padding: 1rem 1.2rem;
-            border-bottom: 1px solid #f0f0f0;
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
         }
 
-        .data-table tbody tr:hover {
-            background: #f8f9ff;
-        }
-
-        .data-table tbody tr:last-child td {
-            border-bottom: none;
+        tr:hover {
+            background: #f8f9fa;
         }
 
         .prize-badge {
-            display: inline-block;
-            padding: 0.4rem 0.8rem;
-            background: linear-gradient(135deg, #ffd700, #ffed4e);
-            color: #333;
+            background: linear-gradient(135deg, #ff6b6b, #c44569);
+            color: white;
+            padding: 0.5rem 1rem;
             border-radius: 20px;
-            font-weight: 700;
-            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-block;
         }
 
         .delete-button {
             padding: 0.5rem 1rem;
-            background: #ff4757;
+            background: #e74c3c;
             color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-weight: 600;
-            font-size: 0.85rem;
-            transition: all 0.3s ease;
-            font-family: 'Quicksand', sans-serif;
-        }
-
-        .delete-button:hover {
-            background: #d63031;
-            transform: scale(1.05);
+            font-size: 0.9rem;
         }
 
         .no-data {
             text-align: center;
             padding: 3rem;
             color: #999;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
         }
 
-        .device-info {
-            font-size: 0.85rem;
-            color: #666;
-            max-width: 300px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+        code {
+            background: #f0f0f0;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
-            body {
-                padding: 1rem;
-            }
-
             .admin-header {
+                flex-direction: column;
                 text-align: center;
             }
 
@@ -316,93 +251,13 @@
                 justify-content: center;
             }
 
-            .controls {
-                flex-direction: column;
+            table {
+                font-size: 0.9rem;
             }
 
-            .search-input {
-                width: 100%;
+            th, td {
+                padding: 0.5rem;
             }
-
-            .table-container {
-                overflow-x: auto;
-            }
-
-            .data-table {
-                min-width: 800px;
-            }
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 20px;
-            max-width: 400px;
-            text-align: center;
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            color: #667eea;
-            margin-bottom: 1rem;
-            font-weight: 700;
-        }
-
-        .modal-message {
-            margin-bottom: 1.5rem;
-            color: #666;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-        }
-
-        .modal-button {
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 10px;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: 'Quicksand', sans-serif;
-            transition: all 0.3s ease;
-        }
-
-        .modal-button.confirm {
-            background: #ff4757;
-            color: white;
-        }
-
-        .modal-button.confirm:hover {
-            background: #d63031;
-        }
-
-        .modal-button.cancel {
-            background: #e0e0e0;
-            color: #333;
-        }
-
-        .modal-button.cancel:hover {
-            background: #d0d0d0;
         }
     </style>
 </head>
@@ -420,9 +275,7 @@
     <!-- Admin Panel -->
     <div id="adminPanel">
         <div class="admin-header">
-            <div>
-                <div class="admin-title">🎊 Quản lý Lì Xì Tết 2026</div>
-            </div>
+            <div class="admin-title">🎊 Quản lý Lì Xì Tết 2026</div>
             <div class="admin-stats">
                 <div class="stat-item">
                     <div class="stat-value" id="totalPlayers">0</div>
@@ -443,39 +296,28 @@
         </div>
 
         <div class="table-container">
-            <table class="data-table">
+            <table>
                 <thead>
                     <tr>
                         <th>Tên</th>
                         <th>Tiền thưởng</th>
                         <th>Thời gian</th>
-                        <th>IP/ID</th>
+                        <th>IP</th>
                         <th>Thiết bị</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
                 <tbody id="playersTableBody">
-                    <tr>
-                        <td colspan="6" class="no-data">Chưa có dữ liệu</td>
-                    </tr>
+                    <tr><td colspan="6" class="no-data">Đang tải...</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- Confirmation Modal -->
-    <div id="confirmModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-title">Xác nhận</div>
-            <div class="modal-message" id="modalMessage">Bạn có chắc chắn muốn thực hiện thao tác này?</div>
-            <div class="modal-buttons">
-                <button class="modal-button cancel" id="modalCancel">Hủy</button>
-                <button class="modal-button confirm" id="modalConfirm">Xác nhận</button>
-            </div>
-        </div>
-    </div>
-
     <script>
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://rsirugplyvchmxngjnaq.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzaXJ1Z3BseXZjaG14bmdqbmFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzExNDk0NjAsImV4cCI6MjA4NjcyNTQ2MH0.auAi1YFZD5bBHlQaXsC6ZQghO_Ll5Vpb0J4e8lVE-BI';
         const ADMIN_PASSWORD = 'admin2026';
 
         // Elements
@@ -491,16 +333,6 @@
         const playersTableBody = document.getElementById('playersTableBody');
         const totalPlayers = document.getElementById('totalPlayers');
         const totalPrize = document.getElementById('totalPrize');
-        const confirmModal = document.getElementById('confirmModal');
-        const modalMessage = document.getElementById('modalMessage');
-        const modalCancel = document.getElementById('modalCancel');
-        const modalConfirm = document.getElementById('modalConfirm');
-
-        // Google Sheets API URL
-        const SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbz-qElmaofsGGRb6JY43Id3xZdmbct6oUjMXI4pkbvsTrgN68PcxTsIYDxgIEeMxarZ/exec';
-
-        let currentAction = null;
-        let currentPlayerId = null;
 
         // Check if already logged in
         if (sessionStorage.getItem('adminLoggedIn') === 'true') {
@@ -514,8 +346,7 @@
         });
 
         function login() {
-            const password = passwordInput.value;
-            if (password === ADMIN_PASSWORD) {
+            if (passwordInput.value === ADMIN_PASSWORD) {
                 sessionStorage.setItem('adminLoggedIn', 'true');
                 showAdminPanel();
                 errorMessage.classList.remove('show');
@@ -537,29 +368,27 @@
             location.reload();
         });
 
-        // Load players data from Google Sheets
+        // Load players from Supabase
         async function loadPlayers(searchTerm = '') {
             try {
                 playersTableBody.innerHTML = '<tr><td colspan="6" class="no-data">⏳ Đang tải dữ liệu...</td></tr>';
                 
-                const url = `${SHEETS_API_URL}?action=getAll`;
-                console.log('📡 Fetching from:', url);
-                
-                const response = await fetch(url);
-                console.log('📥 Response status:', response.status);
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/players?select=*&order=created_at.desc`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
                 
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    throw new Error(`HTTP ${response.status}`);
                 }
                 
-                const text = await response.text();
-                console.log('📄 Response text:', text);
-                
-                const players = JSON.parse(text);
-                console.log('📊 Parsed players:', players);
+                const players = await response.json();
+                console.log('📊 Loaded:', players);
                 
                 // Filter by search term
-                const filteredPlayers = searchTerm 
+                const filtered = searchTerm 
                     ? players.filter(p => 
                         p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                         p.ip.toLowerCase().includes(searchTerm.toLowerCase())
@@ -568,37 +397,84 @@
 
                 // Update stats
                 totalPlayers.textContent = players.length;
-                const total = players.reduce((sum, p) => sum + (parseInt(p.prize) || 0), 0);
-                totalPrize.textContent = total.toLocaleString('vi-VN') + 'đ';
+                totalPrize.textContent = players.reduce((sum, p) => sum + p.prize, 0).toLocaleString('vi-VN') + 'đ';
 
                 // Render table
-                if (filteredPlayers.length === 0) {
-                    playersTableBody.innerHTML = '<tr><td colspan="6" class="no-data">📭 Chưa có người chơi nào</td></tr>';
+                if (filtered.length === 0) {
+                    playersTableBody.innerHTML = '<tr><td colspan="6" class="no-data">📭 Không có dữ liệu</td></tr>';
                     return;
                 }
 
-                playersTableBody.innerHTML = filteredPlayers.map((player, index) => `
+                playersTableBody.innerHTML = filtered.map(p => `
                     <tr>
-                        <td><strong>${escapeHtml(player.name)}</strong></td>
-                        <td><span class="prize-badge">${parseInt(player.prize).toLocaleString('vi-VN')} VNĐ</span></td>
-                        <td>${formatDate(player.timestamp)}</td>
-                        <td><code>${player.ip}</code></td>
-                        <td><div class="device-info" title="${escapeHtml(player.device)}">${getDeviceType(player.device)}</div></td>
-                        <td><button class="delete-button" onclick="confirmDelete('${player.ip}')">Xóa & Reset IP</button></td>
+                        <td><strong>${escapeHtml(p.name)}</strong></td>
+                        <td><span class="prize-badge">${p.prize.toLocaleString('vi-VN')} VNĐ</span></td>
+                        <td>${formatDate(p.timestamp)}</td>
+                        <td><code>${p.ip}</code></td>
+                        <td>${getDevice(p.device)}</td>
+                        <td><button class="delete-button" onclick="deletePlayer('${p.ip}')">Xóa & Reset</button></td>
                     </tr>
                 `).join('');
-                
-                console.log('✅ Table rendered successfully');
             } catch (error) {
-                console.error('❌ Error details:', error);
-                playersTableBody.innerHTML = `<tr><td colspan="6" class="no-data">❌ Lỗi: ${error.message}<br><small>Xem Console (F12) để biết thêm chi tiết</small></td></tr>';
+                console.error('Error:', error);
+                playersTableBody.innerHTML = `<tr><td colspan="6" class="no-data">❌ Lỗi: ${error.message}</td></tr>`;
             }
         }
 
-        // Search
-        searchInput.addEventListener('input', (e) => {
-            loadPlayers(e.target.value);
+        // Delete player by IP
+        async function deletePlayer(ip) {
+            if (!confirm(`Xóa người chơi với IP: ${ip}?`)) return;
+            
+            try {
+                await fetch(`${SUPABASE_URL}/rest/v1/players?ip=eq.${ip}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
+                
+                console.log('✅ Deleted:', ip);
+                loadPlayers();
+            } catch (error) {
+                alert('Lỗi khi xóa!');
+            }
+        }
+
+        // Clear all
+        clearAllButton.addEventListener('click', async () => {
+            if (!confirm('⚠️ XÓA TẤT CẢ dữ liệu?')) return;
+            
+            try {
+                // Get all IDs first
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/players?select=id`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
+                const players = await response.json();
+                
+                // Delete each one
+                for (const player of players) {
+                    await fetch(`${SUPABASE_URL}/rest/v1/players?id=eq.${player.id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                        }
+                    });
+                }
+                
+                console.log('✅ Cleared all');
+                loadPlayers();
+            } catch (error) {
+                alert('Lỗi khi xóa!');
+            }
         });
+
+        // Search
+        searchInput.addEventListener('input', (e) => loadPlayers(e.target.value));
 
         // Refresh
         refreshButton.addEventListener('click', () => {
@@ -606,111 +482,23 @@
             loadPlayers();
         });
 
-        // Clear all
-        clearAllButton.addEventListener('click', () => {
-            showModal('Xóa tất cả dữ liệu?', 'clearAll');
-        });
-
-        // Delete player
-        function confirmDelete(ip) {
-            currentPlayerId = ip;
-            const players = JSON.parse(localStorage.getItem('tetPlayers') || '[]');
-            const player = players.find(p => p.ip === ip);
-            showModal(`Xóa người chơi "${player.name}" và reset IP?`, 'delete');
+        // Utilities
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
-        // Show confirmation modal
-        function showModal(message, action) {
-            modalMessage.textContent = message;
-            currentAction = action;
-            confirmModal.classList.add('active');
-        }
-
-        // Modal cancel
-        modalCancel.addEventListener('click', () => {
-            confirmModal.classList.remove('active');
-            currentAction = null;
-            currentPlayerId = null;
-        });
-
-        // Modal confirm
-        modalConfirm.addEventListener('click', () => {
-            if (currentAction === 'delete' && currentPlayerId) {
-                deletePlayer(currentPlayerId);
-            } else if (currentAction === 'clearAll') {
-                clearAllPlayers();
-            }
-            confirmModal.classList.remove('active');
-            currentAction = null;
-            currentPlayerId = null;
-        });
-
-        // Delete player function
-        async function deletePlayer(ip) {
-            try {
-                const url = `${SHEETS_API_URL}?action=deleteIP&ip=${encodeURIComponent(ip)}`;
-                const response = await fetch(url);
-                const data = await response.json();
-                
-                console.log('✅ Deleted IP:', ip, data);
-                
-                // Reload after 500ms
-                setTimeout(() => loadPlayers(), 500);
-            } catch (error) {
-                console.error('Error deleting player:', error);
-                alert('Lỗi khi xóa. Vui lòng thử lại.');
-            }
-        }
-
-        // Clear all players
-        async function clearAllPlayers() {
-            try {
-                const url = `${SHEETS_API_URL}?action=clearAll`;
-                const response = await fetch(url);
-                const data = await response.json();
-                
-                console.log('✅ Cleared all data:', data);
-                
-                // Reload after 500ms
-                setTimeout(() => loadPlayers(), 500);
-            } catch (error) {
-                console.error('Error clearing data:', error);
-                alert('Lỗi khi xóa. Vui lòng thử lại.');
-            }
-        }
-
-        // Utility functions
         function formatDate(timestamp) {
             const date = new Date(timestamp);
-            return date.toLocaleString('vi-VN', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
+            return date.toLocaleString('vi-VN');
         }
 
-        function getDeviceType(userAgent) {
-            if (/mobile/i.test(userAgent)) return '📱 Mobile';
-            if (/tablet/i.test(userAgent)) return '📱 Tablet';
-            return '💻 Desktop';
-        }
-
-        function escapeHtml(text) {
-            const map = {
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#039;'
-            };
-            return text.replace(/[&<>"']/g, m => map[m]);
-        }
-
-        // Initial load
-        if (sessionStorage.getItem('adminLoggedIn') === 'true') {
-            loadPlayers();
+        function getDevice(ua) {
+            if (!ua) return '🖥️ Unknown';
+            if (/mobile/i.test(ua)) return '📱 Mobile';
+            if (/tablet/i.test(ua)) return '📱 Tablet';
+            return '🖥️ Desktop';
         }
     </script>
 </body>
