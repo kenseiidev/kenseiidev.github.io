@@ -831,20 +831,30 @@
             return fingerprint;
         }
 
-        // Google Sheets API URL
-        const SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbz-qElmaofsGGRb6JY43Id3xZdmbct6oUjMXI4pkbvsTrgN68PcxTsIYDxgIEeMxarZ/exec';
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://rsirugplyvchmxngjnaq.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzaXJ1Z3BseXZjaG14bmdqbmFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzExNDk0NjAsImV4cCI6MjA4NjcyNTQ2MH0.auAi1YFZD5bBHlQaXsC6ZQghO_Ll5Vpb0J4e8lVE-BI';
 
-        // Check if IP already played (using Google Sheets)
+        // Check if IP already played (using Supabase)
         async function hasUserPlayed() {
             try {
                 const userIP = await getUserIP();
-                const url = `${SHEETS_API_URL}?action=checkIP&ip=${encodeURIComponent(userIP)}`;
-                const response = await fetch(url);
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/players?ip=eq.${userIP}&select=*`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
+                
                 const data = await response.json();
                 
-                if (data.played) {
-                    console.log('✅ User already played:', data);
-                    return data;
+                if (data && data.length > 0) {
+                    console.log('✅ User already played:', data[0]);
+                    return {
+                        played: true,
+                        name: data[0].name,
+                        prize: data[0].prize
+                    };
                 }
                 return null;
             } catch (error) {
@@ -853,18 +863,33 @@
             }
         }
 
-        // Save player data to Google Sheets
+        // Save player data to Supabase
         async function savePlayerData(name, prize) {
             try {
                 const userIP = await getUserIP();
-                const url = `${SHEETS_API_URL}?action=save&name=${encodeURIComponent(name)}&prize=${prize}&ip=${encodeURIComponent(userIP)}&timestamp=${encodeURIComponent(new Date().toISOString())}&device=${encodeURIComponent(navigator.userAgent)}`;
+                const playerData = {
+                    name: name,
+                    prize: prize,
+                    ip: userIP,
+                    timestamp: new Date().toISOString(),
+                    device: navigator.userAgent
+                };
                 
-                const response = await fetch(url);
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/players`, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=representation'
+                    },
+                    body: JSON.stringify(playerData)
+                });
+                
                 const data = await response.json();
-                
-                console.log('✅ Data saved to Google Sheets:', data);
+                console.log('✅ Data saved to Supabase:', data);
             } catch (error) {
-                console.error('Error saving to Google Sheets:', error);
+                console.error('Error saving to Supabase:', error);
             }
         }
 
@@ -887,28 +912,16 @@
         let isMusicPlaying = false;
         let hasOpened = false;
         let hasSwipedToOpen = false;
-        let userHasPlayed = false; // Track if user already played
 
-        // Check if already played on page load (in background, non-blocking)
+        // Check if already played on page load
         window.addEventListener('DOMContentLoaded', async () => {
-            // Don't block UI - check in background
-            checkUserPlayedStatus();
-        });
-        
-        // Background check for played status
-        async function checkUserPlayedStatus() {
             const playedData = await hasUserPlayed();
             if (playedData) {
-                userHasPlayed = true;
                 document.getElementById('playedName').textContent = playedData.name;
                 document.getElementById('playedAmount').textContent = parseInt(playedData.prize).toLocaleString('vi-VN') + ' VNĐ';
-                
-                // Only show if user is still on welcome screen
-                if (!welcomeScreen.classList.contains('hidden')) {
-                    alreadyPlayedScreen.classList.add('active');
-                }
+                alreadyPlayedScreen.classList.add('active');
             }
-        }
+        });
 
         // Enable start button when name is entered
         nameInput.addEventListener('input', () => {
@@ -916,33 +929,9 @@
         });
 
         // Start game
-        startButton.addEventListener('click', async () => {
+        startButton.addEventListener('click', () => {
             const name = nameInput.value.trim();
             if (name) {
-                // Show loading
-                startButton.disabled = true;
-                startButton.textContent = 'Đang kiểm tra...';
-                
-                // Quick check if already played (in case background check hasn't finished)
-                if (!userHasPlayed) {
-                    const playedData = await hasUserPlayed();
-                    if (playedData) {
-                        userHasPlayed = true;
-                        document.getElementById('playedName').textContent = playedData.name;
-                        document.getElementById('playedAmount').textContent = parseInt(playedData.prize).toLocaleString('vi-VN') + ' VNĐ';
-                        welcomeScreen.classList.add('hidden');
-                        alreadyPlayedScreen.classList.add('active');
-                        return;
-                    }
-                }
-                
-                // Check again right before starting (double check)
-                if (userHasPlayed) {
-                    welcomeScreen.classList.add('hidden');
-                    alreadyPlayedScreen.classList.add('active');
-                    return;
-                }
-                
                 userName = name;
                 
                 // Force play music on user interaction (button click)
